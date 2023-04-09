@@ -61,12 +61,14 @@ function App() {
         </button>
       </div>
       <TypeBox currentFilters={filters} setFilters={setFilter} />
-      <PokemonPage currentPokemon={currentPokemon} currentPage={currentPage} />
-      <Pagination
-        numPages={numOfPages}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      <div className="page-container">
+        <PokemonPage currentPokemon={currentPokemon} currentPage={currentPage} />
+        <Pagination
+          numPages={numOfPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
     </div>
   );
 }

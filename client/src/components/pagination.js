@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/pagination.css';
 
 function Pagination({ numPages, currentPage, setCurrentPage }) {
 
@@ -21,25 +22,22 @@ function Pagination({ numPages, currentPage, setCurrentPage }) {
     };
 
     return (
-        <div style={{ textAlign: 'center' }}>
-            <br/>
-            {(currentPage !== 1) && (<button onClick={prevPage}>prev </button>)}
+        <div className="pagination-container">
+            {(currentPage !== 1) && (<button onClick={prevPage} className="pagination-button">Prev</button>)}
 
             {
                 pageNumbers.map(number => {
                     if (number < currentPage + 5 && number > currentPage - 1) {
                         return(
-                        <>
-                         <button onClick={() => setCurrentPage(number)} style= {{backgroundColor: (number == currentPage) ? 'red' : ''}}>
-                        {number}
-                        </button>
-                        </>)
+                        <button onClick={() => setCurrentPage(number)} className={number == currentPage ? "pagination-button current-page" : "pagination-button"}>
+                            {number}
+                        </button>)
                     }
                 })
             }
 
             {
-                (currentPage !== numPages) && <button onClick={nextPage}> next </button>
+                (currentPage !== numPages) && <button onClick={nextPage} className="pagination-button">Next</button>
             }
         </div>
     );

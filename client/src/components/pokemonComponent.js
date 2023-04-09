@@ -3,7 +3,7 @@ import { Col, Container, Row, Card, Button} from "react-bootstrap";
 import { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { apiGetSinglePokemon } from "../api/pokeAPI";
-
+import "../styles/pokemonComponent.css";
 
 function PokemonPage({ currentPokemon, currentPage }) {
 
@@ -33,47 +33,46 @@ function PokemonPage({ currentPokemon, currentPage }) {
 
     const renderMoreInfo = (singlePoke) => {
         return(
-            <Card.Body> 
+            <Card.Body className="more-info-card-body"> 
                 <Card.Title style={ { textAlign: 'center' } }> { singlePoke.name.english } </Card.Title>
                 {formatExtraInformation(singlePoke)}
                 <div style={ {textAlign: 'center'}}> 
-                                <Button 
-                                variant="info"
-                                size="sm"
-                                onClick={() => setIndividualPoke("")}
-                                > 
-                                Minimize 
-                                </Button>
-                            </div>
+                    <Button 
+                        variant="secondary"
+                        size="sm"
+                        className="learn-more-button"
+                        onClick={() => setIndividualPoke("")}
+                    > 
+                        Minimize 
+                    </Button>
+                </div>
             </Card.Body>
         );
     };
 
     const renderBasicCard = ( item ) => {
-
         return(
-            <Card.Body> 
-                <Card.Title style={ { textAlign: 'center' } }> { item.name.english } </Card.Title>
-                <Pokemon key = { item.id } pokemon= { item } />
-                <div style={ {textAlign: 'center'}}> 
-                    <Button 
-                    variant="info"
-                    size="sm"
-                    onClick={() => getMoreInfo(item.id)}
-                    > 
-                    Learn More 
-                    </Button>
-                </div>
-            </Card.Body>
+          <Card.Body className="basic-card-body"> 
+            <Card.Title style={ { textAlign: 'center', paddingBottom: '10px', color: 'green' } }> { item.name.english } </Card.Title>
+            <Pokemon key = { item.id } pokemon= { item } />
+            <div style={ {textAlign: 'center', paddingTop: '20px'} }> 
+              <Button 
+                variant="success"
+                size="sm"
+                onClick={() => getMoreInfo(item.id)}
+              > 
+                Learn More 
+              </Button>
+            </div>
+          </Card.Body>
         )
-    };
+      };
+      
 
     return(
         <div> 
 
-        <h1 style={ {textAlign: 'center' }}>
-            Page {currentPage}!
-        </h1> 
+        <h1 className="heading-card">Page {currentPage}</h1>
 
         <Container>        
         <Row xs={2} md={5}>

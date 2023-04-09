@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-image: url("https://c4.wallpaperflare.com/wallpaper/503/189/157/video-games-pokemon-pixels-pixel-art-wallpaper-preview.jpg");
+    background-image: url("../../public/pixel_wallpaper.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -99,8 +99,8 @@
 }
 
 input[type="checkbox"]:checked + .checkbox-label {
-  background-color: #3498DB;
-  border-color: #3498DB;
+  background-color: #dc3545;
+  border-color: #dc3545;
   color: white;
 }
 
@@ -111,7 +111,18 @@ input[type="checkbox"] + .checkbox-label:hover {
 }
 
 input[type="checkbox"]:checked + .checkbox-label:hover {
-  background-color: #217dbb;
-  border-color: #217dbb;
+  background-color: #dc3545;
+  border-color: #dc3545;
   color: white;
 }
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff;
+}
+
