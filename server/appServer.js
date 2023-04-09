@@ -4,7 +4,7 @@ const { populatePokemons } = require("./populatePokemons.js");
 const { getTypes } = require("./schemas/getTypes.js");
 const { handleErr } = require("./errors/errorHandler.js");
 const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
+const cookieParser = require('cookie-parser');
 const jwt = require("jsonwebtoken");
 const {
   PokemonBadRequest,
@@ -12,7 +12,7 @@ const {
   PokemonDbError,
   PokemonNotFoundError,
   PokemonDuplicateError,
-  PokemonNoSuchRouteError,
+  PokemonNoSuchRouteError
 } = require("./errors/errors.js");
 const { asyncWrapper } = require("./errors/asyncWrapper.js");
 const dotenv = require("dotenv");
@@ -29,7 +29,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods:['GET', 'POST', 'PUT', 'DELETE']
   })
 );
 
@@ -41,18 +41,17 @@ const start = asyncWrapper(async () => {
   pokeModel = await populatePokemons(pokeSchema);
 
   app.listen(process.env.pokeServerPORT, (err) => {
-    if (err) throw new PokemonDbError(err);
+    if (err)
+      throw new PokemonDbError(err)
     else
-      console.log(
-        `Phew! Server is running on port: ${process.env.pokeServerPORT}`
-      );
-  });
-});
+      console.log(`Phew! Server is running on port: ${process.env.pokeServerPORT}`);
+  })
+})
 
 start();
 
 const auth = (req, res, next) => {
-  const token = req.cookies["access_token"];
+  const token = req.cookies['access_token'];
   console.log("Authentication token: " + token);
 
   if (!token) {
@@ -60,40 +59,35 @@ const auth = (req, res, next) => {
   }
   try {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET); // nothing happens if token is valid
-    morgan.token("username", (req, res) => {
-      return JSON.stringify(req.cookies["username"]);
-    });
+    morgan.token('username', (req, res) => { return JSON.stringify(req.cookies['username']) })
     next();
   } catch (err) {
     throw new PokemonBadRequest("Invalid token");
   }
-};
+}
 
 const adminAuth = (req, res, next) => {
-  var isAdmin = req.cookies["is_admin"];
+  var isAdmin = req.cookies['is_admin'];
 
   if (!isAdmin) {
-    throw new PokemonBadRequest(
-      "Access Denied - Account Does Not Have Admin Privledges"
-    );
-  }
+    throw new PokemonBadRequest("Access Denied - Account Does Not Have Admin Privledges");
+  };
 
   try {
-    if (isAdmin == "false") {
-      throw new err();
+    if (isAdmin == 'false') {
+      throw new err;
     }
     next();
   } catch (err) {
-    throw new PokemonBadRequest(
-      "Access Denied - Account Does Not Have Admin Privledges"
-    );
+    throw new PokemonBadRequest("Access Denied - Account Does Not Have Admin Privledges");
   }
-};
+}
 
 const logUniqueAPIUsers = async (username) => {
+
   try {
     const visit = await apiUserStats.findOne({
-      date: new Date().toISOString().substring(0, 10),
+      date: new Date().toISOString().substring(0, 10)
     });
 
     if (visit) {
@@ -112,25 +106,25 @@ const logUniqueAPIUsers = async (username) => {
       }
 
       visit.save();
+
     } else {
       apiUserStats.create({
         stats: [
           {
             user: username,
-          },
-        ],
+          }
+        ]
       });
     }
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const logEndPointUsage = async (username, apiEndpoint) => {
+
   try {
-    const endpointVisit = await topUserEndPoints.findOne({
-      endpoint: apiEndpoint,
-    });
+    const endpointVisit = await topUserEndPoints.findOne({endpoint: apiEndpoint});
 
     if (endpointVisit) {
       let added = false;
@@ -148,14 +142,15 @@ const logEndPointUsage = async (username, apiEndpoint) => {
       }
 
       endpointVisit.save();
+
     } else {
       topUserEndPoints.create({
         endpoint: apiEndpoint,
         access: [
           {
             user: username,
-          },
-        ],
+          }
+        ]
       });
     }
   } catch (err) {
@@ -163,192 +158,164 @@ const logEndPointUsage = async (username, apiEndpoint) => {
   }
 };
 
+
 const logRouteAccess = async (apiEndpoint, statusNum, method) => {
+
   try {
     routeAccesLog.create({
       endpoint: apiEndpoint,
       method: method,
-      status: statusNum,
+      status: statusNum, 
     });
+
   } catch (err) {
     console.log(err);
   }
-};
+}
 
-app.use(auth); // Boom! All routes below this line are protected
+app.use(auth) // Boom! All routes below this line are protected
 
 app.use(morgan(":method :url :status :username"));
-app.use(
-  morgan((token, req, res) => {
-    let username = req.cookies["username"];
-    let endpoint = token.url(req);
-    let status = token.status(req, res);
-    let method = token.method(req, res);
+app.use(morgan((token, req, res) => {
+  let username = req.cookies['username'];
+  let endpoint  = token.url(req);
+  let status = token.status(req, res);
+  let method = token.method(req, res);
 
-    logUniqueAPIUsers(username);
-    logEndPointUsage(username, endpoint);
-    logRouteAccess(endpoint, status, method);
-  })
-);
+  logUniqueAPIUsers(username);
+  logEndPointUsage(username, endpoint);
+  logRouteAccess(endpoint, status, method);
+}));
 
-app.get(
-  "/api/v1/pokemons",
-  asyncWrapper(async (req, res) => {
-    const docs = await pokeModel.find({}).sort({ id: 1 });
-    res.json(docs);
-  })
-);
+app.get('/api/v1/pokemons', asyncWrapper(async (req, res) => {
+  const docs = await pokeModel.find({})
+    .sort({ "id": 1 })
+  res.json(docs);
+}))
 
-app.get(
-  "/api/v1/pokemon/:id",
-  asyncWrapper(async (req, res) => {
-    const { id } = req.params;
-    const docs = await pokeModel.find({ id: id });
-    if (docs.length != 0) res.json(docs);
-    else res.json({ errMsg: "Pokemon not found" });
-  })
-);
+app.get('/api/v1/pokemon/:id', asyncWrapper(async (req, res) => {
+  const { id } = req.params;
+  const docs = await pokeModel.find({ "id": id });
+  if (docs.length != 0) res.json(docs);
+  else res.json({ errMsg: "Pokemon not found" });
+}))
+
 
 app.use(adminAuth);
 
 /** ADMIN ACCESS ONLY */
 
-app.post(
-  "/api/v1/pokemon/",
-  asyncWrapper(async (req, res) => {
-    if (!req.body.id) throw new PokemonBadRequestMissingID();
-    const poke = await pokeModel.find({ id: req.body.id });
-    if (poke.length != 0) throw new PokemonDuplicateError();
-    const pokeDoc = await pokeModel.create(req.body);
+app.post('/api/v1/pokemon/', asyncWrapper(async (req, res) => {
+  if (!req.body.id) throw new PokemonBadRequestMissingID();
+  const poke = await pokeModel.find({ "id": req.body.id });
+  if (poke.length != 0) throw new PokemonDuplicateError();
+  const pokeDoc = await pokeModel.create(req.body)
+  res.json({
+    msg: "Added Successfully"
+  });
+}))
+
+
+app.put('/api/v1/pokemon/:id', asyncWrapper(async (req, res) => {
+  const selection = { id: req.params.id }
+  const update = req.body
+  const options = {
+    new: true,
+    runValidators: true,
+    overwrite: true
+  }
+  const doc = await pokeModel.findOneAndUpdate(selection, update, options)
+  if (doc) {
     res.json({
-      msg: "Added Successfully",
+      msg: "Updated Successfully",
+      pokeInfo: doc
+    })
+  } else {
+    throw new PokemonNotFoundError("");
+  }
+}))
+
+app.patch('/api/v1/pokemon/:id', asyncWrapper(async (req, res) => {
+  const selection = { id: req.params.id };
+  const update = req.body;
+  const options = {
+    new: true,
+    runValidators: true
+  };
+  const doc = await pokeModel.findOneAndUpdate(selection, update, options);
+  if (doc) {
+    res.json({
+      msg: "Updated Successfully",
+      pokeInfo: doc
     });
-  })
-);
+  } else {
+    throw new PokemonNotFoundError("");
+  }
+}));
 
-app.put(
-  "/api/v1/pokemon/:id",
-  asyncWrapper(async (req, res) => {
-    const selection = { id: req.params.id };
-    const update = req.body;
-    const options = {
-      new: true,
-      runValidators: true,
-      overwrite: true,
-    };
-    const doc = await pokeModel.findOneAndUpdate(selection, update, options);
-    if (doc) {
-      res.json({
-        msg: "Updated Successfully",
-        pokeInfo: doc,
-      });
-    } else {
-      throw new PokemonNotFoundError("");
-    }
-  })
-);
+app.delete('/api/v1/pokemon/:id', asyncWrapper(async (req, res) => {
+  const docs = await pokeModel.findOneAndRemove({ id: req.params.id })
+  if (docs)
+    res.json({
+      msg: "Deleted Successfully"
+    });
+  else
+    throw new PokemonNotFoundError("");
+}))
 
-app.patch(
-  "/api/v1/pokemon/:id",
-  asyncWrapper(async (req, res) => {
-    const selection = { id: req.params.id };
-    const update = req.body;
-    const options = {
-      new: true,
-      runValidators: true,
-    };
-    const doc = await pokeModel.findOneAndUpdate(selection, update, options);
-    if (doc) {
-      res.json({
-        msg: "Updated Successfully",
-        pokeInfo: doc,
-      });
-    } else {
-      throw new PokemonNotFoundError("");
-    }
-  })
-);
-
-app.delete(
-  "/api/v1/pokemon/:id",
-  asyncWrapper(async (req, res) => {
-    const docs = await pokeModel.findOneAndRemove({ id: req.params.id });
-    if (docs)
-      res.json({
-        msg: "Deleted Successfully",
-      });
-    else throw new PokemonNotFoundError("");
-  })
-);
-
-app.get("/api/v1/pokemonImage/:id", (req, res) => {
+app.get('/api/v1/pokemonImage/:id', (req, res) => {
+    
   let searchParam = req.params.id;
-
+  
   if (isNaN(parseInt(searchParam)) || parseInt(searchParam) > 801) {
-    res.send("PLEASE ENTER A VALID POKEMON ID!");
-    return;
+      res.send("PLEASE ENTER A VALID POKEMON ID!");
+      return;
   }
 
   searchParam = searchParam.padStart(3, "0");
-
-  res.send(
-    "https://github.com/fanzeyi/pokemon.json/blob/master/images/" +
-      searchParam +
-      ".png"
-  );
+  
+  res.send("https://github.com/fanzeyi/pokemon.json/blob/master/images/" + searchParam + ".png");
 });
 
-app.post(
-  "/admin/users",
-  asyncWrapper(async (req, res) => {
-    // const date = new Date(req.body.date).toISOString().substring(0, 10);
-    const date = req.body.date;
-    const userDocs = await apiUserStats.findOne({ date: date });
-    var uniqueUsers = [];
+app.post('/admin/users', asyncWrapper(async (req, res)  => {
+  // const date = new Date(req.body.date).toISOString().substring(0, 10);
+  const date = req.body.date;
+  const userDocs = await apiUserStats.findOne({date: date});
+  var uniqueUsers = [];
 
-    if (userDocs) {
-      userDocs.stats.forEach((s, index) => {
-        var userData = {};
-        userData["userName"] = userDocs.stats[index].user;
-        userData["accessCount"] = userDocs.stats[index].apiAccessCount;
-        userData["date"] = date;
-        uniqueUsers.push(userData);
-      });
-    }
+  if (userDocs) {
+    userDocs.stats.forEach((s, index) => {
+      var userData = {};
+      userData["userName"] = userDocs.stats[index].user;
+      userData["accessCount"] = userDocs.stats[index].apiAccessCount;
+      userData["date"] = date;
+      uniqueUsers.push(userData);
+    })
+  }
 
-    res.json(uniqueUsers);
-  })
-);
+  res.json(uniqueUsers);
+}));
 
-app.post(
-  "/admin/unique",
-  asyncWrapper(async (req, res) => {
-    const userDocs = await apiUserStats.find({
-      $and: [
-        { date: { $lte: req.body.endDate } },
-        { date: { $gte: req.body.startDate } },
-      ],
-    });
 
-    res.json(userDocs);
-  })
-);
+app.post('/admin/unique', asyncWrapper(async (req, res) => {
+  const userDocs = await apiUserStats.find({
+    $and: [
+      {'date': { $lte: req.body.endDate}},
+      {'date': {$gte: req.body.startDate}}
+  ]});
 
-app.get(
-  "/admin/endpoints",
-  asyncWrapper(async (req, res) => {
-    const userDocs = await topUserEndPoints.find({});
-    res.json(userDocs);
-  })
-);
+  res.json(userDocs);
+}))
 
-app.get(
-  "/admin/accesslogs",
-  asyncWrapper(async (req, res) => {
-    const userDocs = await routeAccesLog.find({});
-    res.json(userDocs);
-  })
-);
+app.get('/admin/endpoints', asyncWrapper(async (req, res) => {
+  const userDocs = await topUserEndPoints.find({})
+  res.json(userDocs);
+}))
+
+app.get('/admin/accesslogs', asyncWrapper(async(req, res) => {
+  const userDocs = await routeAccesLog.find({});
+  res.json(userDocs);
+}))
 
 /** ADMIN ACCESS ENDS */
 

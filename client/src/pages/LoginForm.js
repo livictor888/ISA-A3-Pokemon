@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from '../api/pokeAPI';
 import { apiGetAuthUser } from "../api/pokeAPI";
-
+import "../styles/LoginForm.css";
 
 function AdminLogin() {
 
@@ -60,31 +60,30 @@ function AdminLogin() {
     }, []); 
 
     return (
-        <div style={{ textAlign: 'center' }}>
-            <form onSubmit={handleSubmit}>
-              <span> Admin Login </span>
-              <br />
-              <input
-                type="text"
-                name="username"
-                placeholder="username"
-                onChange={changeHandler}
-              />
-              <br />
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                onChange={changeHandler}
-              />
-              <br />
-              <button type="submit">
-                Login
-              </button>
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleSubmit}>
+                <span className="login-title">Admin Login</span>
+                <input
+                    className="login-input"
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    onChange={changeHandler}
+                />
+                <input
+                    className="login-input"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={changeHandler}
+                />
+                <button className="login-button" type="submit">
+                    Login
+                </button>
             </form>
-            {credentialError ? <h1>Credentials Entered Incorrectly</h1> : ''}
+            {credentialError ? <h1 className="login-error">Credentials Entered Incorrectly</h1> : ''}
         </div>
-      );
+    );
 };
 
 export default AdminLogin;

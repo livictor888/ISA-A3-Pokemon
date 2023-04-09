@@ -5,8 +5,8 @@ import TypeBox from "../components/typeBoxes";
 import { useNavigate } from "react-router-dom";
 import { apiGetAllPokemon } from "../api/pokeAPI";
 import withBasicAuth from "../components/withBasicAuth";
-import { Button} from "react-bootstrap";
 import { apiLogout } from "../api/pokeAPI";
+import "../styles/app.css";
 
 function App() {
 
@@ -42,18 +42,32 @@ function App() {
   var numOfPages = Math.ceil(pokemon.length / pokemonPerPage);
 
   return (
-    <>
-    <Button onClick={ async() => {
+    <div className="app-container">
+      <div className="button-container">
+        <button
+          className="logout-button"
+          onClick={async () => {
             await apiLogout();
             navigate("/login");
-            }}>
-            Logout
-    </Button>
-    <TypeBox currentFilters={filters} setFilters={setFilter}/>
-    <PokemonPage currentPokemon={ currentPokemon } currentPage= { currentPage }/>
-    <Pagination numPages={numOfPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-    <button onClick={() => navigate("/adminlogin")}> Admin Privledges! </button>
-    </>
+          }}
+        >
+          Logout
+        </button>
+        <button
+          className="admin-button"
+          onClick={() => navigate("/adminlogin")}
+        >
+          Admin Privileges!
+        </button>
+      </div>
+      <TypeBox currentFilters={filters} setFilters={setFilter} />
+      <PokemonPage currentPokemon={currentPokemon} currentPage={currentPage} />
+      <Pagination
+        numPages={numOfPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
+    </div>
   );
 }
 
