@@ -20,7 +20,7 @@ function ErrorEndpoints () {
         Title,
         Tooltip,
         Legend
-      );
+    );
 
     const [apiErrors, setAPIErrors] = useState([]);
     const [routeCount, setRouteCount] = useState({});

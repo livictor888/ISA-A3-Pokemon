@@ -57,7 +57,7 @@ function App() {
           className="admin-button"
           onClick={() => navigate("/adminlogin")}
         >
-          Admin Privileges!
+          Admin Panel
         </button>
       </div>
       <TypeBox currentFilters={filters} setFilters={setFilter} />
