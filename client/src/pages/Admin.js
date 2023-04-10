@@ -48,14 +48,6 @@ function AdminPage() {
           <Col>
             <Card>
               <Card.Title style={{ textAlign: "center" }}>
-                Number of Errors by Endpoint
-              </Card.Title>
-              <ErrorEndpoints />
-            </Card>
-          </Col>
-          <Col>
-            <Card>
-              <Card.Title style={{ textAlign: "center" }}>
                 Top API Users
               </Card.Title>
               <TopUsers />
@@ -69,22 +61,30 @@ function AdminPage() {
               <UniqueUsers />
             </Card>
           </Col>
-        </Row>
-        <Row xs={1}>
           <Col>
             <Card>
               <Card.Title style={{ textAlign: "center" }}>
-                Recent 4xx Errors
+                Number of Errors by Endpoint
               </Card.Title>
-              <RecentErrors />
+              <ErrorEndpoints />
             </Card>
           </Col>
+        </Row>
+        <Row xs={1}>
           <Col>
             <Card>
               <Card.Title style={{ textAlign: "center" }}>
                 Top User of Each Endpoint
               </Card.Title>
               <Endpoints />
+            </Card>
+          </Col>
+          <Col>
+            <Card>
+              <Card.Title style={{ textAlign: "center" }}>
+                Recent 4xx Errors
+              </Card.Title>
+              <RecentErrors />
             </Card>
           </Col>
         </Row>
